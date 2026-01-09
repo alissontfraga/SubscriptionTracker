@@ -4,16 +4,22 @@ package com.alissontfraga.subscriptiontracker.service;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.alissontfraga.subscriptiontracker.entity.User;
 import com.alissontfraga.subscriptiontracker.repository.UserRepository;
 
+import lombok.RequiredArgsConstructor;
+
+@Transactional
+@RequiredArgsConstructor
 @Service
 public class UserService implements UserDetailsService{
+
     private final UserRepository userRepository;
-    public UserService(UserRepository userRepository){this.userRepository = userRepository;}
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -26,10 +32,10 @@ public class UserService implements UserDetailsService{
     }
 
     
-    public User createUser(String username, String rawPassword, BCryptPasswordEncoder encoder) {
+    public User createUser(String username, String rawPassword) {
         User user = new User();
         user.setUsername(username);
-        user.setPassword(encoder.encode(rawPassword));
+        user.setPassword(passwordEncoder.encode(rawPassword));
         return userRepository.save(user);
     }
 
