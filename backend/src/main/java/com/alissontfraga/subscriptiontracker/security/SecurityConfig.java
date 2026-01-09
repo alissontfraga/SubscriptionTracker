@@ -8,28 +8,18 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.alissontfraga.subscriptiontracker.service.UserService;
-
 @Configuration
 public class SecurityConfig {
-    
-    private final JwtUtil jwtUtil;
-    private final UserService userService;
-    
-    public SecurityConfig(JwtUtil jwtUtil, UserService userService) {
-        this.jwtUtil = jwtUtil;
-        this.userService = userService;
-    }
-
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter) {
         http.cors(csrf -> csrf.disable())
         .cors(cors -> {})
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -49,11 +39,13 @@ public class SecurityConfig {
         return http.build();
 
     }
-
+    
     @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
+     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+
 
     //Esses sites, com esses métodos e esses headers, podem acessar minha API
     @Bean 
