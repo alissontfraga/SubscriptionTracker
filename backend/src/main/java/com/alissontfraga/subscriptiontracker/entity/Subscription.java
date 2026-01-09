@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import com.alissontfraga.subscriptiontracker.enums.Category;
 import com.alissontfraga.subscriptiontracker.enums.Currency;
 import com.alissontfraga.subscriptiontracker.enums.Frequency;
 import com.alissontfraga.subscriptiontracker.enums.Status;
@@ -56,6 +57,11 @@ public class Subscription {
     @Column(nullable = false)
     @NotNull
     private Frequency frequency;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @NotNull
+    private Category category;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
