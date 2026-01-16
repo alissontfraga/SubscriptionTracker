@@ -54,8 +54,10 @@ public class UserService implements UserDetailsService {
     }
 
     public User findByUsername(String username) {
-        return userRepository.findByUsername(username).orElse(null);
+        return userRepository.findByUsername(username)
+            .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
+
 
     @PreAuthorize("hasRole('ADMIN')")
     public void deleteByUsername(String username) {
