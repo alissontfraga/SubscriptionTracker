@@ -19,7 +19,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/me")
     public UserResponse me(Authentication authentication) {
         User user = userService.findByUsername(authentication.getName());
