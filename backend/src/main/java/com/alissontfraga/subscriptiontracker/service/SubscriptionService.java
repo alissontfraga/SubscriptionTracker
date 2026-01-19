@@ -74,16 +74,16 @@ public class SubscriptionService {
     }
 
 
-
     public Subscription partialUpdate(Long id, String username, SubscriptionUpdateRequest dto) {
-    User user = userService.findByUsername(username);
 
-    Subscription subscription = subscriptionRepository.findById(id)
-        .orElseThrow(() -> new ResourceNotFoundException("Subscription not found"));
+        User user = userService.findByUsername(username);
 
-        if (!Objects.equals(subscription.getOwner().getId(), user.getId())) {
+        Subscription subscription = subscriptionRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Subscription not found"));
+
+        if (!subscription.getOwner().getId().equals(user.getId())) {
             throw new ForbiddenException("You can't change this subscription");
-            }
+        }
 
         // Atualização parcial: só altera se o campo vier no DTO
         if (dto.name() != null) subscription.setName(dto.name());
@@ -94,25 +94,24 @@ public class SubscriptionService {
         if (dto.status() != null) subscription.setStatus(dto.status());
 
         if (dto.startDate() != null) {
-            validateStartDate(dto.startDate()); // valida startDate
+            validateStartDate(dto.startDate());
             subscription.setStartDate(dto.startDate());
         }
 
         if (dto.renewalDate() != null) {
-            validateRenewalDate(dto.renewalDate(), subscription.getStartDate()); // valida renewalDate
+            validateRenewalDate(dto.renewalDate(), subscription.getStartDate());
             subscription.setRenewalDate(dto.renewalDate());
         }
-
         // Atualiza status de exibição se tiver lógica específica
         updateDisplayStatus(subscription);
 
-         return subscriptionRepository.save(subscription);
+        return subscriptionRepository.save(subscription);
     }
 
 
 
-     public void delete(Long id, String username) {
 
+     public void delete(Long id, String username) {
         User user = userService.findByUsername(username);
 
         Subscription subscription = subscriptionRepository.findById(id)
