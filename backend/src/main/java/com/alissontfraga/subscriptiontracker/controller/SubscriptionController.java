@@ -16,6 +16,8 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,60 +29,61 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 
 
-
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/subscriptions")
 public class SubscriptionController {
-    
+
     private final SubscriptionService subscriptionService;
 
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping
+    public List<SubscriptionResponse> list(
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        List<Subscription> subscriptions =
+                subscriptionService.listSubscription(userDetails.getUsername());
 
-   @GetMapping 
-          public List<SubscriptionResponse> list(@AuthenticationPrincipal UserDetails userDetails) {      List<Subscription> subscriptions = subscriptionService.listSubscription(userDetails.getUsername()); 
-          return subscriptions.stream() 
-        .map(SubscriptionResponse::new) 
-        .toList();
- }
-
-   @PostMapping
-    public ResponseEntity<SubscriptionResponse> create(
-            @AuthenticationPrincipal UserDetails userDetails,
-            @RequestBody @Valid SubscriptionRequest dto) {
-            // Chama o service para criar a subscription com validações e regras de negócio
-            Subscription saved = subscriptionService.createSubscription(userDetails.getUsername(), dto);
-            // Retorna 201 Created com o DTO de resposta
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(new SubscriptionResponse(saved));
+        return subscriptions.stream()
+                .map(SubscriptionResponse::new)
+                .toList();
     }
 
-    
+    @PreAuthorize("hasRole('USER')")
+    @PostMapping
+    public ResponseEntity<SubscriptionResponse> create(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestBody @Valid SubscriptionRequest dto
+    ) {
+        Subscription saved =
+                subscriptionService.createSubscription(userDetails.getUsername(), dto);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(new SubscriptionResponse(saved));
+    }
+
+    @PreAuthorize("isAuthenticated()")
     @PatchMapping("/{id}")
     public ResponseEntity<SubscriptionResponse> partialUpdate(
-        @PathVariable Long id,
-        @AuthenticationPrincipal UserDetails userDetails,
-        @RequestBody SubscriptionUpdateRequest dto) {
-        // Chama o service para atualizar parcialmente
-        Subscription updated = subscriptionService.partialUpdate(id, userDetails.getUsername(), dto);
-        // Retorna 200 OK com o DTO atualizado
+    @PathVariable Long id,
+    Authentication authentication,
+    @RequestBody @Valid SubscriptionUpdateRequest dto) {
+
+        Subscription updated =
+        subscriptionService.partialUpdate(id, authentication.getName(), dto);
+
         return ResponseEntity.ok(new SubscriptionResponse(updated));
     }
 
 
+    @PreAuthorize("hasRole('USER')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
-            subscriptionService.delete(id, userDetails.getUsername());
-
-            return ResponseEntity.noContent().build(); 
+    public ResponseEntity<Void> delete(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        subscriptionService.delete(id, userDetails.getUsername());
+        return ResponseEntity.noContent().build();
     }
-
-
-
-    }
-    
-    
-
-
-
-
-
+}
