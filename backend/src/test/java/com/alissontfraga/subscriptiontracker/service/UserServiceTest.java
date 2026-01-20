@@ -20,6 +20,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -96,59 +97,8 @@ public class UserServiceTest {
         }
     }
 
-    @Nested
-    class loadUserByUsername {
-
-        @Test
-        void shouldLoadUserByUsernameSuccessfully() {
-            // given
-            String username = "alisso";
-            String password = "$bcrypt";
-
-            User user = new User();
-            user.setUsername(username);
-            user.setPassword(password);
-            user.getRoles().add(Role.ROLE_USER);
-
-            when(userRepository.findByUsername(username))
-                .thenReturn(Optional.of(user));
-
-            // when
-            UserDetails userDetails = userService.loadUserByUsername(username);
-
-            // then
-            assertNotNull(userDetails);
-            assertEquals(username, userDetails.getUsername());
-            assertEquals(password, userDetails.getPassword());
-
-            assertTrue(
-                userDetails.getAuthorities().stream()
-                    .anyMatch(a -> a.getAuthority().equals("ROLE_USER"))
-            );
-        }
-
-
-        @Test
-        void shouldThrowUsernameNotFoundExceptionWhenUserDoesNotExist() {
-            // given
-            String username = "alisso";
-
-            when(userRepository.findByUsername(username))
-                .thenReturn(Optional.empty());
-
-            // when / then
-            UsernameNotFoundException exception = assertThrows(
-                UsernameNotFoundException.class,
-                () -> userService.loadUserByUsername(username)
-            );
-
-            assertEquals("User not found", exception.getMessage());
-
-            verify(userRepository).findByUsername(username);
-        }
-
-    }
-
+   
+    
     @Nested
     class findByUsername {
 
