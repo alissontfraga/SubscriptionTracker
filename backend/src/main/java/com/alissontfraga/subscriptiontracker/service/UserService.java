@@ -1,10 +1,6 @@
 package com.alissontfraga.subscriptiontracker.service;
 
-
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -14,31 +10,16 @@ import com.alissontfraga.subscriptiontracker.entity.User;
 import com.alissontfraga.subscriptiontracker.enums.Role;
 import com.alissontfraga.subscriptiontracker.repository.UserRepository;
 
-import lombok.RequiredArgsConstructor;
 
+import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class UserService implements UserDetailsService {
+
+public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-
-    @Override
-    public UserDetails loadUserByUsername(String username) {
-        User user = userRepository.findByUsername(username)
-            .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
-        var authorities = user.getRoles().stream()
-            .map(role -> new SimpleGrantedAuthority(role.name()))
-            .toList();
-
-        return new org.springframework.security.core.userdetails.User(
-            user.getUsername(),
-            user.getPassword(),
-            authorities
-        );
-    }
 
     public User createUser(String username, String rawPassword) {
         if (userRepository.existsByUsername(username)) {
@@ -57,7 +38,6 @@ public class UserService implements UserDetailsService {
         return userRepository.findByUsername(username)
             .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
-
 
     @PreAuthorize("hasRole('ADMIN')")
     public void deleteByUsername(String username) {

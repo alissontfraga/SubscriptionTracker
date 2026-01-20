@@ -1,5 +1,6 @@
 package com.alissontfraga.subscriptiontracker.security;
 
+import java.time.Instant;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -17,24 +18,25 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class JwtUtil {
 
+    private static final String ROLES_CLAIM = "roles";
+
     @Value("${jwt.secret}")
     private String jwtSecret;
 
     @Value("${jwt.expiration-ms}")
     private Long expiration;
 
-    private Algorithm algorithm() {
-        return Algorithm.HMAC256(jwtSecret);
-    }
-
     public String generateToken(User user) {
+        Instant now = Instant.now();
+
         return JWT.create()
             .withSubject(user.getUsername())
-            .withClaim("roles",
+            .withClaim(
+                ROLES_CLAIM,
                 user.getRoles().stream().map(Enum::name).toList()
             )
-            .withIssuedAt(new Date())
-            .withExpiresAt(new Date(System.currentTimeMillis() + expiration))
+            .withIssuedAt(Date.from(now))
+            .withExpiresAt(Date.from(now.plusMillis(expiration)))
             .sign(algorithm());
     }
 
@@ -46,13 +48,21 @@ public class JwtUtil {
         try {
             verify(token);
             return true;
-        } catch (JWTVerificationException e) {
-            log.warn("JWT inválido");
+        } catch (JWTVerificationException ex) {
+            log.warn("JWT inválido ou expirado: {}", ex.getMessage());
             return false;
         }
     }
 
+    /* =======================
+       Métodos internos
+       ======================= */
+
     private DecodedJWT verify(String token) {
         return JWT.require(algorithm()).build().verify(token);
+    }
+
+    private Algorithm algorithm() {
+        return Algorithm.HMAC256(jwtSecret);
     }
 }
