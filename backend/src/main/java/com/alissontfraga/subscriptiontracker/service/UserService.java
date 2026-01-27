@@ -10,12 +10,11 @@ import com.alissontfraga.subscriptiontracker.entity.User;
 import com.alissontfraga.subscriptiontracker.enums.Role;
 import com.alissontfraga.subscriptiontracker.repository.UserRepository;
 
-
 import lombok.RequiredArgsConstructor;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
-
 public class UserService {
 
     private final UserRepository userRepository;
