@@ -38,13 +38,19 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest req) {
-        User user = userService.findByUsername(req.username());
 
-        if (user == null || !passwordEncoder.matches(req.password(), user.getPassword())) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+    User user = userService.findByUsername(req.username());
 
-        String token = jwtUtil.generateToken(user);
-        return ResponseEntity.ok(new AuthResponse(token, user.getUsername()));
+    if (user == null) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
+
+    if (!passwordEncoder.matches(req.password(), user.getPassword())) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    String token = jwtUtil.generateToken(user);
+    return ResponseEntity.ok(new AuthResponse(token, user.getUsername()));
+}
+
 }

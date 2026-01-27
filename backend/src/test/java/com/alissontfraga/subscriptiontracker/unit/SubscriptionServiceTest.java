@@ -1,4 +1,4 @@
-package com.alissontfraga.subscriptiontracker.service;
+package com.alissontfraga.subscriptiontracker.unit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -36,6 +36,8 @@ import com.alissontfraga.subscriptiontracker.exception.BadRequestException;
 import com.alissontfraga.subscriptiontracker.exception.ForbiddenException;
 import com.alissontfraga.subscriptiontracker.exception.ResourceNotFoundException;
 import com.alissontfraga.subscriptiontracker.repository.SubscriptionRepository;
+import com.alissontfraga.subscriptiontracker.service.SubscriptionService;
+import com.alissontfraga.subscriptiontracker.service.UserService;
 
 // AAA - Arrange - Act - Assert
 
@@ -267,6 +269,34 @@ class SubscriptionServiceTest {
             assertEquals("Netflix Premium", result.getName());
             assertEquals(BigDecimal.valueOf(39.90), result.getPrice());
         }
+
+        
+        @DisplayName("Should update startDate and renewalDate when provided")
+        @Test
+        void shouldUpdateDatesWhenProvided() {
+            // ARRANGE
+            User user = user(1L, "alisso");
+            Subscription subscription = subscription(user);
+            
+            LocalDate startDate = LocalDate.of(2026, 1, 1);
+            LocalDate renewalDate = LocalDate.of(2026, 2, 1);
+
+            SubscriptionUpdateRequest dto = new SubscriptionUpdateRequest(
+                null, null, null, null, null, null, startDate, renewalDate
+            );
+
+            when(userService.findByUsername("alisso")).thenReturn(user);
+            when(subscriptionRepository.findById(1L)).thenReturn(Optional.of(subscription));
+            when(subscriptionRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+            // ACT
+            Subscription result = subscriptionService.partialUpdate(1L, "alisso", dto);
+
+            // ASSERT
+            assertEquals(startDate, result.getStartDate());
+            assertEquals(renewalDate, result.getRenewalDate());
+        }
+
 
         @DisplayName("Should throw ForbiddenException when User is not the Owner")
         @Test
