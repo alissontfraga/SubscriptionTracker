@@ -14,6 +14,7 @@ import com.alissontfraga.subscriptiontracker.entity.User;
 import com.alissontfraga.subscriptiontracker.security.JwtUtil;
 import com.alissontfraga.subscriptiontracker.service.UserService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -29,6 +30,7 @@ public class AuthController {
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
 
+    @Operation(summary = "Sign up", description = "create a user")
     @PostMapping("/register")
     public ResponseEntity<RegisterResponse> register(@Valid @RequestBody RegisterRequest dto ) {
         User user = userService.createUser(dto.username(), dto.password());
@@ -36,6 +38,7 @@ public class AuthController {
             .body(new RegisterResponse(user.getId(), user.getUsername()));
     }
 
+    @Operation(summary = "Log in", description = "log in to a user account")
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest req) {
 
