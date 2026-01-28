@@ -20,7 +20,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public User createUser(String username, String rawPassword) {
+    private User createUserWithRole(String username, String rawPassword, Role role) {
         if (userRepository.existsByUsername(username)) {
             throw new IllegalArgumentException("Username already exists");
         }
@@ -28,15 +28,26 @@ public class UserService {
         User user = new User();
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(rawPassword));
-        user.getRoles().add(Role.ROLE_USER);
+        user.getRoles().add(role);
 
         return userRepository.save(user);
     }
+
+    public User createUser(String username, String rawPassword) {
+        return createUserWithRole(username, rawPassword, Role.ROLE_USER);
+    }
+
+    public User createAdmin(String username, String rawPassword) {
+        return createUserWithRole(username, rawPassword, Role.ROLE_ADMIN);
+    }
+
 
     public User findByUsername(String username) {
         return userRepository.findByUsername(username)
             .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
+
+
 
     @PreAuthorize("hasRole('ADMIN')")
     public void deleteByUsername(String username) {
