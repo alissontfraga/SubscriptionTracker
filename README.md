@@ -1,6 +1,120 @@
 # Subscription Tracker
-## 🚧 Under Construction
 
-This project is not finished yet.  
-I am currently working on it 🚀  
-Check back soon for updates!
+## 📌 Project Overview
+**SubscriptionTracker** is a Spring Boot application for tracking user subscriptions.  
+It provides authentication, role-based access (USER / ADMIN), subscription management, and database migrations using Flyway.
+
+The project focuses on clean backend architecture, security, and real-world Spring Boot practices.
+
+---
+
+## 🚀 Features
+
+### 👤 User Management
+- User registration and login (JWT-based authentication)
+- Secure access to protected resources
+- User profile management
+
+### 📦 Subscriptions
+- Full CRUD operations
+- Support for:
+  - Plans
+  - Prices
+  - Currencies
+  - Categories
+  - Status
+  - Billing frequency
+- Users can only manage their own subscriptions
+
+### 🛠️ Admin Tools
+- Admin-only endpoints
+- User and system data management
+- Role-based authorization
+
+### 🗄️ Database
+- PostgreSQL
+- Flyway migrations
+- Automatic schema versioning on startup
+
+---
+
+## 🧰 Tech Stack
+
+- **Language:** Java 21
+- **Framework:** Spring Boot
+- **Security:** Spring Security + JWT
+- **Build Tool:** Maven 
+- **Database:** PostgreSQL
+- **Migrations:** Flyway
+- **Containerization:** Docker 
+
+---
+
+## ⚙️ Prerequisites
+
+- **JDK 21** installed and `JAVA_HOME` configured
+- **Docker** (optional, for PostgreSQL)
+- No global Maven installation required
+
+---
+
+## 🌱 Environment Configuration
+
+Create an environment file (example: `.env`) with the following variables:
+
+```env
+# Database
+DB_NAME=subscriptiontracker
+DB_USERNAME=postgres
+DB_PASSWORD=postgres
+
+# JWT
+JWT_SECRET=your_jwt_secret_key
+JWT_EXPIRATION_MS=86400000
+
+# Frontend
+FRONTEND_ORIGIN=http://localhost:3000
+
+```
+
+## 📌 API Documentation
+
+### 🔐 Authentication
+
+| Method | Route               | Description        |
+|-------:|---------------------|--------------------|
+| POST   | /api/auth/register  | Register user      |
+| POST   | /api/auth/login     | Login and get JWT  |
+
+---
+
+### 📦 Subscriptions
+
+| Method | Route                          | Description                    |
+|-------:|--------------------------------|--------------------------------|
+| POST   | /api/subscriptions             | Create subscription            |
+| GET    | /api/subscriptions             | List user subscriptions        |
+| PATCH  | /api/subscriptions/{id}        | Update subscription (partial)  |
+| DELETE | /api/subscriptions/{id}        | Delete subscription            |
+
+---
+
+### 👤 Users
+
+| Method | Route               | Description            |
+|-------:|---------------------|------------------------|
+| GET    | /api/users/me      | Get current user data  |
+
+---
+
+### 🛠️ Admin
+
+| Method | Route                      | Description           |
+|-------:|----------------------------|-----------------------|
+| GET    | /api/admin/create-admin  | Create admin user      |
+| DELETE | /api/admin/users/{username}      | Delete user           |
+
+---
+
+🔒 **Authorization:**  
+All routes (except auth) requires Bearer token
