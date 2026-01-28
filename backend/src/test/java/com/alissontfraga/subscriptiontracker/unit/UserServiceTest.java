@@ -88,6 +88,55 @@ public class UserServiceTest {
             assertEquals("encoded", user.getPassword());
             verify(passwordEncoder).encode("123");
         }
+
+
+        @Test
+        void shouldCreateAdminSuccessfully() {
+            // given
+            String rawPassword = "admin123";
+            String encodedPassword = "$bcrypt";
+            String username = "admin";
+
+            when(userRepository.existsByUsername(username)).thenReturn(false);
+            when(passwordEncoder.encode(rawPassword)).thenReturn(encodedPassword);
+            when(userRepository.save(any(User.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+            // when
+            User admin = userService.createAdmin(username, rawPassword);
+
+            // then
+            assertNotNull(admin);
+            assertEquals(username, admin.getUsername());
+            assertEquals(encodedPassword, admin.getPassword());
+            assertTrue(admin.getRoles().contains(Role.ROLE_ADMIN));
+        }
+
+        @Test
+        void shouldThrowExceptionWhenAdminUsernameAlreadyExists() {
+            String username = "admin";
+
+            when(userRepository.existsByUsername(username)).thenReturn(true);
+
+            assertThrows(IllegalArgumentException.class,
+                () -> userService.createAdmin(username, "admin123"));
+
+            verify(userRepository, never()).save(any());
+        }
+
+        @Test
+        void shouldEncodeAdminPasswordBeforeSaving() {
+            when(userRepository.existsByUsername("admin2")).thenReturn(false);
+            when(passwordEncoder.encode(anyString())).thenReturn("encoded");
+            when(userRepository.save(any(User.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+            User admin = userService.createAdmin("admin2", "123");
+
+            assertEquals("encoded", admin.getPassword());
+            verify(passwordEncoder).encode("123");
+        }
+
     }
 
    
@@ -130,6 +179,7 @@ public class UserServiceTest {
 
             assertEquals("User not found", exception.getMessage());
         }
+
     }
 
     @Nested
