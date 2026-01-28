@@ -9,6 +9,8 @@ import com.alissontfraga.subscriptiontracker.dto.subscription.SubscriptionUpdate
 import com.alissontfraga.subscriptiontracker.entity.Subscription;
 import com.alissontfraga.subscriptiontracker.service.SubscriptionService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -36,6 +38,7 @@ public class SubscriptionController {
 
     private final SubscriptionService subscriptionService;
 
+    @Operation(summary = "List user subscriptions", description = "List all user subscriptions")
     @PreAuthorize("hasRole('USER')")
     @GetMapping
     public List<SubscriptionResponse> list(
@@ -49,6 +52,7 @@ public class SubscriptionController {
                 .toList();
     }
 
+    @Operation(summary = "Create subscription", description = "Create a subscription")
     @PreAuthorize("hasRole('USER')")
     @PostMapping
     public ResponseEntity<SubscriptionResponse> create(
@@ -63,9 +67,11 @@ public class SubscriptionController {
                 .body(new SubscriptionResponse(saved));
     }
 
+    @Operation(summary = "Update subscription", description = "partially or completely updates subscription")
     @PreAuthorize("isAuthenticated()")
     @PatchMapping("/{id}")
     public ResponseEntity<SubscriptionResponse> partialUpdate(
+    @Parameter(description = "Subscription ID")
     @PathVariable Long id,
     Authentication authentication,
     @RequestBody @Valid SubscriptionUpdateRequest dto) {
@@ -77,9 +83,11 @@ public class SubscriptionController {
     }
 
 
+    @Operation(summary = "Delete subscription", description = "deletes a user subscription")
     @PreAuthorize("hasRole('USER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
+            @Parameter(description = "Subscription ID")
             @PathVariable Long id,
             @AuthenticationPrincipal UserDetails userDetails
     ) {
