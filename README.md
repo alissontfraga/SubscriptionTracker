@@ -50,6 +50,7 @@ The project focuses on clean backend architecture, security, and real-world Spri
 - **Migrations:** Flyway
 - **Testing:** JUnit, Mockito, MockMvc
 - **Containerization:** Docker
+- **API Documentation:** OpenAPI / Swagger
 
 
 ---
