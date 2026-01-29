@@ -11,9 +11,12 @@ The project focuses on clean backend architecture, security, and real-world Spri
 ## 🚀 Features
 
 ### 👤 User Management
-- User registration and login (JWT-based authentication)
+- Stateless authentication and authorization using **JWT (Bearer tokens)**
+- Role-based access control (**USER / ADMIN**)
+- User registration and login
 - Secure access to protected resources
 - User profile management
+
 
 ### 📦 Subscriptions
 - Full CRUD operations
