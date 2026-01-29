@@ -49,7 +49,9 @@ The project focuses on clean backend architecture, security, and real-world Spri
 - **Build Tool:** Maven 
 - **Database:** PostgreSQL
 - **Migrations:** Flyway
-- **Containerization:** Docker 
+- **Testing:** JUnit, Mockito, MockMvc
+- **Containerization:** Docker
+
 
 ---
 
@@ -61,24 +63,18 @@ The project focuses on clean backend architecture, security, and real-world Spri
 
 ---
 
-## 🌱 Environment Configuration
+## 🧪 Testing
 
-Create an environment file (example: `.env`) with the following variables:
+The project includes both unit and integration tests to ensure reliability and correctness.
 
-```env
-# Database
-DB_NAME=subscriptiontracker
-DB_USERNAME=postgres
-DB_PASSWORD=postgres
+- **Unit tests** written with **JUnit** and **Mockito**, focusing on business logic and service layer isolation
+- **Integration tests** covering controllers, security configuration, and persistence layer
+- Validation of authorization rules (USER / ADMIN) and access to protected endpoints
 
-# JWT
-JWT_SECRET=your_jwt_secret_key
-JWT_EXPIRATION_MS=86400000
+--- 
 
-# Frontend
-FRONTEND_ORIGIN=http://localhost:3000
-
-```
+🔒 **Authorization:**  
+All routes (except auth) requires Bearer token
 
 ## 📌 API Documentation
 
@@ -114,10 +110,29 @@ FRONTEND_ORIGIN=http://localhost:3000
 
 | Method | Route                      | Description           |
 |-------:|----------------------------|-----------------------|
-| GET    | /api/admin/create-admin  | Create admin user      |
-| DELETE | /api/admin/users/{username}      | Delete user           |
+| GET    | /api/admin/create-admin    | Create admin user     |
+| DELETE | /api/admin/users/{username}| Delete user           |
 
 ---
 
-🔒 **Authorization:**  
-All routes (except auth) requires Bearer token
+---
+## 🌱 Environment Configuration
+
+Create an environment file (example: `.env`) with the following variables:
+
+```env
+# Database
+DB_NAME=subscriptiontracker
+DB_USERNAME=postgres
+DB_PASSWORD=postgres
+
+# JWT
+JWT_SECRET=your_jwt_secret_key
+JWT_EXPIRATION_MS=86400000
+
+# Frontend
+FRONTEND_ORIGIN=http://localhost:3000
+
+```
+
+
