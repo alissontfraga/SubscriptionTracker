@@ -21,7 +21,6 @@ The project focuses on clean backend architecture, security, and real-world Spri
 ### 📦 Subscriptions
 - Full CRUD operations
 - Support for:
-  - Plans
   - Prices
   - Currencies
   - Categories
