@@ -68,7 +68,7 @@ The project focuses on clean backend architecture, security, and real-world Spri
 The project includes both unit and integration tests to ensure reliability and correctness.
 
 - **Unit tests** written with **JUnit** and **Mockito**, focusing on business logic and service layer isolation
-- **Integration tests** covering controllers, security configuration, and persistence layer
+- **Integration tests** wrriten with **MockMvc** covering controllers, security configuration, and persistence layer
 - Validation of authorization rules (USER / ADMIN) and access to protected endpoints
 
 --- 
