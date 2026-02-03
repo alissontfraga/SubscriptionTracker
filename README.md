@@ -57,9 +57,8 @@ The project focuses on clean backend architecture, security, and real-world Spri
 
 ## ⚙️ Prerequisites
 
-- **JDK 21** installed and `JAVA_HOME` configured
-- **Docker** (optional, for PostgreSQL)
-- No global Maven installation required
+- **Docker** 
+- **Docker Compose** 
 
 ---
 
@@ -115,10 +114,9 @@ All routes (except auth) requires Bearer token
 
 ---
 
----
 ## 🌱 Environment Configuration
 
-Create an environment file (example: `.env`) with the following variables:
+Create a .env file in the project root (same directory as docker-compose.yml):
 
 ```env
 # Database
@@ -134,5 +132,24 @@ JWT_EXPIRATION_MS=86400000
 FRONTEND_ORIGIN=http://localhost:3000
 
 ```
+---
 
+## 🐳 Running with Docker Compose
+### ▶️ Build and Start Containers
+***docker compose up --build***
 
+📌 What this does:
+
+🏗️ Builds the Spring Boot API image
+
+🐘 Starts the PostgreSQL database container
+
+🗄️ Executes Flyway migrations automatically on startup
+
+🌐 Exposes the API on port 8080
+
+### ⛔ Stop Containers
+***docker compose down***
+
+### 🧹 Stop and remove containers + database data:
+***docker compose down -v***
